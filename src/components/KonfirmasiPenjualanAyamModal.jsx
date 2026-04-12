@@ -399,11 +399,10 @@ const KonfirmasiPenjualanAyamModal = ({
               <div className="flex items-center gap-3">
                 <span className="font-semibold">Status Pembayaran :</span>
                 <span
-                  className={`px-3 py-1 rounded ${
-                    paymentStatus === "Lunas"
-                      ? "bg-green-200 text-green-900"
-                      : "bg-orange-200 text-orange-900"
-                  }`}
+                  className={`px-3 py-1 rounded ${paymentStatus === "Lunas"
+                    ? "bg-green-200 text-green-900"
+                    : "bg-orange-200 text-orange-900"
+                    }`}
                 >
                   {paymentStatus}
                 </span>
@@ -416,6 +415,11 @@ const KonfirmasiPenjualanAyamModal = ({
         </div>
 
         <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
+          <button onClick={() => {
+            const checking = toInputDate(takenAt);
+            console.log('checking:', checking);
+          }}>CHECK</button>
+
           <button
             onClick={onClose}
             className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-gray-800 cursor-pointer w-full sm:w-auto"
@@ -501,11 +505,10 @@ const KonfirmasiPenjualanAyamModal = ({
               <button
                 onClick={addPayment}
                 disabled={isUploading}
-                className={`px-4 py-2 rounded text-white ${
-                  isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-700 hover:bg-green-900 cursor-pointer"
-                }`}
+                className={`px-4 py-2 rounded text-white ${isUploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-700 hover:bg-green-900 cursor-pointer"
+                  }`}
               >
                 {isUploading ? "Mengunggah..." : "Simpan"}
               </button>

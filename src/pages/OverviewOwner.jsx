@@ -202,7 +202,7 @@ const OverviewOwner = () => {
               <XAxis dataKey="key" />
               <YAxis />
               <Tooltip
-                formatter={(value, name) => [`${value} Kg`, name]}
+                formatter={(value, name) => [`${Number(value).toFixed(2)} Kg`, name]}
                 labelFormatter={(label) => `Tanggal: ${label}`}
               />
               <Legend verticalAlign="top" align="right" />

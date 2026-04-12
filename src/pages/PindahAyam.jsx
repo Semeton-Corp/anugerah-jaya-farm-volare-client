@@ -19,7 +19,7 @@ const PindahAyam = () => {
 
   const sisaAyam = asal
     ? jumlahDipindah -
-      tujuan.reduce((sum, t) => sum + parseInt(t.jumlahAlokasi || 0), 0)
+    tujuan.reduce((sum, t) => sum + parseInt(t.jumlahAlokasi || 0), 0)
     : 0;
 
   const handlePilihAsal = (kandang) => {
@@ -327,7 +327,7 @@ const PindahAyam = () => {
                       <td className="px-4 py-2">{k.chickenAge}</td>
                       <td className="px-4 py-2">{k.cage.capacity}</td>
                       <td className="px-4 py-2">
-                        {!k.cage.isUsed && k.totalChicken === 0 && (
+                        {(!k.cage.isUsed && k.totalChicken === 0) || asal.batchId == k.batchId && (
                           <button
                             onClick={() => handlePilihTujuan(k)}
                             className="bg-orange-300 hover:bg-orange-500 px-3 py-1 rounded cursor-pointer"
@@ -352,8 +352,8 @@ const PindahAyam = () => {
               {sisaAyam == 0
                 ? "Tidak ayam yang tersisa untuk dipindah!"
                 : sisaAyam < 0
-                ? "Ayam yang dipindahkan sudah melebihi batas!"
-                : "Silakan pilih kandang asal & isi jumlah yang ingin dipindah terlebih dahulu!"}
+                  ? "Ayam yang dipindahkan sudah melebihi batas!"
+                  : "Silakan pilih kandang asal & isi jumlah yang ingin dipindah terlebih dahulu!"}
             </p>
             <button
               className="bg-green-700 text-white px-4 py-2 rounded"

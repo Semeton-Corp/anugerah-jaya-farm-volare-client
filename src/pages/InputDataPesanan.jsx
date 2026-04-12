@@ -1983,6 +1983,11 @@ Kami dari *Anugerah Jaya Farm* ingin mengkonfirmasi harga barang *PER ${unit.toU
         />
       )}
 
+      <button onClick={() => {
+        console.log('variable:', variable);
+      }} >CHECK</button>
+
+
       {popupImage && (
         <ImagePopUp imageUrl={popupImage} onClose={() => setPopupImage(null)} />
       )}
