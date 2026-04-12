@@ -338,7 +338,7 @@ const Gudang = () => {
                     {eggStocks?.map((item, index) => (
                       <tr key={index} className="border-b text-center">
                         <td className="py-2 px-4">{item.item.name}</td>
-                        <td className="py-2 px-4">{item.quantity}</td>
+                        <td className="py-2 px-4">{Number(item.quantity).toFixed(2)}</td>
                         <td className="py-2 px-4">{item.item.unit}</td>
 
                         <td className="py-2 px-4">
@@ -486,13 +486,12 @@ const Gudang = () => {
                       <td className="py-2 px-4">
                         <div className="flex justify-center items-center relative group">
                           <span
-                            className={`w-24 py-1 flex justify-center items-center rounded text-sm font-semibold ${
-                              Number.isNaN(parseInt(item.estimationRunOut))
-                                ? ""
-                                : item.description === "Aman"
-                                  ? "bg-aman-box-surface-color text-aman-text-color"
-                                  : "bg-kritis-box-surface-color text-kritis-text-color"
-                            }`}
+                            className={`w-24 py-1 flex justify-center items-center rounded text-sm font-semibold ${Number.isNaN(parseInt(item.estimationRunOut))
+                              ? ""
+                              : item.description === "Aman"
+                                ? "bg-aman-box-surface-color text-aman-text-color"
+                                : "bg-kritis-box-surface-color text-kritis-text-color"
+                              }`}
                           >
                             {Number.isNaN(parseInt(item.estimationRunOut))
                               ? "-"

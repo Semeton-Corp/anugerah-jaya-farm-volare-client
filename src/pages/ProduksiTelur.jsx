@@ -53,6 +53,11 @@ const ProduksiTelur = () => {
     "Tahun Ini",
   ]);
   const [graphFilter, setGraphFilter] = useState("Minggu Ini");
+  const [selectedTypes, setSelectedTypes] = useState({
+    telurOK_butir: true,
+    telurRetak: true,
+    telurReject: true,
+  });
 
   const isDetailPage = detailPages.some((segment) =>
     location.pathname.includes(segment),
@@ -94,6 +99,13 @@ const ProduksiTelur = () => {
     } catch (err) {
       console.error("Failed to fetch sites", err);
     }
+  };
+
+  const handleToggle = (key) => {
+    setSelectedTypes((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
   };
 
   const fetchOverviewData = async () => {
@@ -335,12 +347,45 @@ const ProduksiTelur = () => {
               </div>
             </div>
 
+            <div className="flex gap-4 mt-4">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedTypes.telurOK_butir}
+                  onChange={() => handleToggle("telurOK_butir")}
+                />
+                Telur OK
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedTypes.telurRetak}
+                  onChange={() => handleToggle("telurRetak")}
+                />
+                Telur Retak
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedTypes.telurReject}
+                  onChange={() => handleToggle("telurReject")}
+                />
+                Telur Reject
+              </label>
+            </div>
+
             <div className="h-64 sm:h-96 mt-4">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis
+                    domain={[
+                      (dataMin) => Math.floor(dataMin * 0.98),
+                      (dataMax) => Math.ceil(dataMax * 1.02),
+                    ]}
                     label={{
                       value: "Butir",
                       angle: -90,
@@ -350,34 +395,45 @@ const ProduksiTelur = () => {
                   />
                   <Tooltip />
                   <Legend verticalAlign="top" align="center" />
-                  <Line
-                    type="monotone"
-                    dataKey="telurOK_butir"
-                    stroke="#00D007"
-                    name="Telur OK (butir)"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="telurRetak"
-                    stroke="#FFD400"
-                    name="Telur Retak"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="telurReject"
-                    stroke="#F41C1C"
-                    name="Telur Reject"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                  />
+                  {selectedTypes.telurOK_butir && (
+                    <Line
+                      type="monotone"
+                      dataKey="telurOK_butir"
+                      stroke="#00D007"
+                      name="Telur OK (butir)"
+                      strokeWidth={2}
+                      dot={{ r: 4 }}
+                    />
+                  )}
+
+                  {selectedTypes.telurRetak && (
+                    <Line
+                      type="monotone"
+                      dataKey="telurRetak"
+                      stroke="#FFD400"
+                      name="Telur Retak"
+                      strokeWidth={2}
+                      dot={{ r: 4 }}
+                    />
+                  )}
+
+                  {selectedTypes.telurReject && (
+                    <Line
+                      type="monotone"
+                      dataKey="telurReject"
+                      stroke="#F41C1C"
+                      name="Telur Reject"
+                      strokeWidth={2}
+                      dot={{ r: 4 }}
+                    />
+                  )}
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </div>
+          <button onClick={() => {
+            console.log('chartData:', chartData);
+          }}>CHECK</button>
         </div>
       )}
     </>

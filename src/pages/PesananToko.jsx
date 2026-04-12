@@ -113,7 +113,11 @@ const PesananToko = () => {
       // console.log("warehouseResponse: ", warehouseResponse);
       if (warehouseResponse.status == 200) {
         setWarehouses(warehouseResponse.data.data);
-        setSelectedWarehouse(warehouseResponse.data.data[0].id);
+        const firstWarehouse = warehouseResponse.data.data?.[0];
+
+        if (firstWarehouse?.id) {
+          setSelectedWarehouse(firstWarehouse.id);
+        }
       }
     } catch (error) {
       console.log("error :", error);
@@ -227,7 +231,11 @@ const PesananToko = () => {
       const placementResponse = await getCurrentUserWarehousePlacement();
       console.log("placementResponse: ", placementResponse);
       if (placementResponse.status == 200) {
-        setSelectedWarehouse(placementResponse?.data?.data[0].warehouse?.id);
+        const placement = placementResponse?.data?.data?.[0];
+
+        if (placement?.warehouse?.id) {
+          setSelectedWarehouse(placement.warehouse.id);
+        }
       }
     } catch (error) {
       console.log("error :", error);
@@ -398,64 +406,70 @@ const PesananToko = () => {
               </tr>
             </thead>
             <tbody>
-              {requestData.map((data, index) => (
-                <tr
-                  key={index}
-                  className="border-t border-gray-200 hover:bg-gray-50 text-center"
-                >
-                  <td className="py-2 px-4">{data.item.name}</td>
-                  <td className="py-2 px-4">{data.quantity}</td>
-                  <td className="py-2 px-4">
-                    {data.store.name && data.store.name.trim() !== ""
-                      ? data.store.name
-                      : "-"}
-                  </td>
-                  <td className="py-2 px-4 text-center">
-                    <span
-                      className={`${getStatusStyle(
-                        data.status,
-                      )} inline-block min-w-[100px] text-center px-3 py-1 text-sm rounded whitespace-nowrap`}
-                    >
-                      {data.status === "Menunggu"
-                        ? "Belum Dikirim"
-                        : data.status}
-                    </span>
-                  </td>
+              {requestData?.map((data, index) => {
+                const itemName = data.item?.name ?? "-";
+                const storeName = data.store?.name?.trim() || "-";
 
-                  <td className="py-2 px-4 flex justify-center gap-4">
-                    {data.status == "Menunggu" && (
-                      <>
-                        <span
-                          className="px-6 py-1 rounded bg-green-700 hover:bg-green-900 text-white cursor-pointer flex items-center gap-2"
-                          onClick={() => {
-                            setSelectedItem(data);
-                            // console.log("data: ", data);
-                            if (data.item.name == "Telur OK") {
-                              setShowConfirmationTelurOk(true);
-                            } else if (data.item.name == "Telur Retak") {
-                              setShowConfirmationTelurRetak(true);
-                            }
-                          }}
-                        >
-                          Kirim Barang
-                        </span>
+                return (
+                  <tr
+                    key={index}
+                    className="border-t border-gray-200 hover:bg-gray-50 text-center"
+                  >
+                    <td className="py-2 px-4">{itemName}</td>
 
-                        {data.item.name !== "Telur Retak" && (
+                    <td className="py-2 px-4">
+                      {Number(data.quantity).toFixed(2) ?? 0}
+                    </td>
+
+                    <td className="py-2 px-4">{storeName}</td>
+
+                    <td className="py-2 px-4 text-center">
+                      <span
+                        className={`${getStatusStyle(
+                          data.status
+                        )} inline-block min-w-[100px] text-center px-3 py-1 text-sm rounded whitespace-nowrap`}
+                      >
+                        {data.status === "Menunggu"
+                          ? "Belum Dikirim"
+                          : data.status}
+                      </span>
+                    </td>
+
+                    <td className="py-2 px-4 flex justify-center gap-4">
+                      {data.status === "Menunggu" && (
+                        <>
                           <span
+                            className="px-6 py-1 rounded bg-green-700 hover:bg-green-900 text-white cursor-pointer flex items-center gap-2"
                             onClick={() => {
-                              setSelectedItemToCancel(data.id);
-                              setShowBatalModal(true);
+                              setSelectedItem(data);
+
+                              if (itemName === "Telur OK") {
+                                setShowConfirmationTelurOk(true);
+                              } else if (itemName === "Telur Retak") {
+                                setShowConfirmationTelurRetak(true);
+                              }
                             }}
-                            className="px-6 py-1 rounded bg-kritis-box-surface-color hover:bg-kritis-text-color cursor-pointer flex items-center gap-2 text-white"
                           >
-                            Tolak
+                            Kirim Barang
                           </span>
-                        )}
-                      </>
-                    )}
-                  </td>
-                </tr>
-              ))}
+
+                          {itemName !== "Telur Retak" && (
+                            <span
+                              onClick={() => {
+                                setSelectedItemToCancel(data.id);
+                                setShowBatalModal(true);
+                              }}
+                              className="px-6 py-1 rounded bg-kritis-box-surface-color hover:bg-kritis-text-color cursor-pointer flex items-center gap-2 text-white"
+                            >
+                              Tolak
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
