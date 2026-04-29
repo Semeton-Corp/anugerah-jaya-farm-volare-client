@@ -61,6 +61,10 @@ const Ayam = () => {
   const [chickenDetail, setChickenDetail] = useState([]);
   const [ayamChartData, setAyamChartData] = useState([]);
   const [chickenAgeData, setChickenAgeData] = useState([]);
+  const [selectedAyamTypes, setSelectedAyamTypes] = useState({
+    ayamMati: true,
+    ayamSakit: true,
+  });
 
   const detailPages = ["detail-ayam"];
 
@@ -74,6 +78,13 @@ const Ayam = () => {
     const detailPath = currentPath + "/detail-ayam";
 
     navigate(detailPath);
+  };
+
+  const handleToggle = (key) => {
+    setSelectedAyamTypes((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
   };
 
   const fetchSites = async () => {
@@ -311,6 +322,28 @@ const Ayam = () => {
                 </div>
               </div>
 
+              <div className="flex gap-6 mb-4 items-center flex-wrap">
+                <label className="flex items-center gap-2 text-base">
+                  <input
+                    type="checkbox"
+                    checked={selectedAyamTypes.ayamMati}
+                    onChange={() => handleToggle("ayamMati")}
+                    className="w-5 h-5 accent-red-500"
+                  />
+                  Ayam Mati
+                </label>
+
+                <label className="flex items-center gap-2 text-base">
+                  <input
+                    type="checkbox"
+                    checked={selectedAyamTypes.ayamSakit}
+                    onChange={() => handleToggle("ayamSakit")}
+                    className="w-5 h-5 accent-yellow-400"
+                  />
+                  Ayam Sakit
+                </label>
+              </div>
+
               <div className="w-full h-64 sm:h-80 overflow-x-auto">
                 <div className="min-w-[800px] h-full">
                   <ResponsiveContainer width="100%" height="100%">
@@ -320,18 +353,22 @@ const Ayam = () => {
                       <YAxis domain={[0, 50]} />
                       <Tooltip />
                       <Legend verticalAlign="top" align="center" />
-                      <Line
-                        type="monotone"
-                        dataKey="ayamMati"
-                        stroke="#ef4444"
-                        name="Ayam Mati"
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="ayamSakit"
-                        stroke="#facc15"
-                        name="Ayam Sakit"
-                      />
+                      {selectedAyamTypes.ayamMati && (
+                        <Line
+                          type="monotone"
+                          dataKey="ayamMati"
+                          stroke="#ef4444"
+                          name="Ayam Mati"
+                        />
+                      )}
+                      {selectedAyamTypes.ayamSakit && (
+                        <Line
+                          type="monotone"
+                          dataKey="ayamSakit"
+                          stroke="#facc15"
+                          name="Ayam Sakit"
+                        />
+                      )}
                     </LineChart>
                   </ResponsiveContainer>
                 </div>

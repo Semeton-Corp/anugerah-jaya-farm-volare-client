@@ -101,10 +101,23 @@ const Penjualan = () => {
     userRole === "Owner" ? 0 : localStorage.getItem("locationId"),
   );
 
+  const [selectedKeuntunganTypes, setSelectedKeuntunganTypes] = useState({
+    income: true,
+    expense: true,
+    profit: true,
+  });
+
   const isDetailPage = detailPages.some((segment) =>
     location.pathname.includes(segment),
   );
   const navigate = useNavigate();
+
+  const handleToggle = (key) => {
+    setSelectedKeuntunganTypes((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
 
   const detailPenjualanHandle = () => {
     const currentPath = location.pathname;
@@ -436,12 +449,44 @@ const Penjualan = () => {
           </div>
 
           {/* keuntungan & penjualan*/}
-          <div className="flex flex-col lg:flex-row h-auto lg:h-95 gap-6">
+          <div className="flex flex-col lg:flex-row h-auto lg:h-105 gap-6">
             {/* Chart Section (1/2 width on large screens) */}
             <div className="w-full lg:w-1/2 bg-white rounded-lg py-6 px-4 sm:px-6 border border-black-6">
               <h2 className="text-lg sm:text-xl font-semibold mb-4 text-center sm:text-left">
                 Keuntungan
               </h2>
+
+              <div className="flex gap-6 mb-4 items-center flex-wrap">
+                <label className="flex items-center gap-2 text-base">
+                  <input
+                    type="checkbox"
+                    checked={selectedKeuntunganTypes.income}
+                    onChange={() => handleToggle("income")}
+                    className="w-5 h-5 accent-green-500"
+                  />
+                  Pendapatan
+                </label>
+
+                <label className="flex items-center gap-2 text-base">
+                  <input
+                    type="checkbox"
+                    checked={selectedKeuntunganTypes.expense}
+                    onChange={() => handleToggle("expense")}
+                    className="w-5 h-5 accent-red-500"
+                  />
+                  Pengeluaran
+                </label>
+
+                <label className="flex items-center gap-2 text-base">
+                  <input
+                    type="checkbox"
+                    checked={selectedKeuntunganTypes.profit}
+                    onChange={() => handleToggle("profit")}
+                    className="w-5 h-5 accent-amber-500"
+                  />
+                  Laba
+                </label>
+              </div>
 
               {/* Wrapper scrollable khusus mobile */}
               <div className="w-full overflow-x-auto">
@@ -490,30 +535,36 @@ const Penjualan = () => {
                         align="right"
                         wrapperStyle={{ fontSize: 12 }}
                       />
-                      <Line
-                        type="monotone"
-                        dataKey="income"
-                        stroke="#22c55e"
-                        strokeWidth={2}
-                        dot={{ r: 3 }}
-                        name="Pendapatan"
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="expense"
-                        stroke="#ef4444"
-                        strokeWidth={2}
-                        dot={{ r: 3 }}
-                        name="Pengeluaran"
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="profit"
-                        stroke="#E8AD34"
-                        strokeWidth={2}
-                        dot={{ r: 3 }}
-                        name="Laba"
-                      />
+                      {selectedKeuntunganTypes.income && (
+                        <Line
+                          type="monotone"
+                          dataKey="income"
+                          stroke="#22c55e"
+                          strokeWidth={2}
+                          dot={{ r: 3 }}
+                          name="Pendapatan"
+                        />
+                      )}
+                      {selectedKeuntunganTypes.expense && (
+                        <Line
+                          type="monotone"
+                          dataKey="expense"
+                          stroke="#ef4444"
+                          strokeWidth={2}
+                          dot={{ r: 3 }}
+                          name="Pengeluaran"
+                        />
+                      )}
+                      {selectedKeuntunganTypes.profit && (
+                        <Line
+                          type="monotone"
+                          dataKey="profit"
+                          stroke="#E8AD34"
+                          strokeWidth={2}
+                          dot={{ r: 3 }}
+                          name="Laba"
+                        />
+                      )}
                     </LineChart>
                   </ResponsiveContainer>
                 </div>

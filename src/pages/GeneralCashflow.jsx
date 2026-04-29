@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -11,7 +11,6 @@ import {
 } from "recharts";
 import YearSelector from "../components/YearSelector";
 import { getCashflowOverview } from "../services/cashflow";
-import { useEffect } from "react";
 
 const MONTHS = [
   "Januari",
@@ -47,7 +46,10 @@ const generateTicks = (min, max) => {
   }
 
   const ticks = [];
-  for (let i = Math.floor(min / step) * step; i <= max + step; i += step) {
+  const minTick = Math.floor(min / step) * step;
+  const maxTick = Math.ceil(max / step) * step;
+
+  for (let i = minTick; i <= maxTick; i += step) {
     ticks.push(i);
   }
   return ticks;
@@ -104,8 +106,65 @@ export default function GeneralCashflow() {
   const [cashflowSummary, setCashflowSummary] = useState([]);
   const [cashflowGraphs, setCashflowGraphs] = useState([]);
   const [eggSaleCashflowGraphs, setEggSaleCashflowGraphs] = useState([]);
+  const [selectedCashflowTypes, setSelectedCashflowTypes] = useState({
+    income: true,
+    profit: true,
+    expense: true,
+  });
+  const [selectedEggSaleTypes, setSelectedEggSaleTypes] = useState({
+    warehouseEggSale: true,
+    storeEggSale: true,
+  });
+  const [selectedCashNetProfitTypes, setSelectedCashNetProfitTypes] = useState({
+    cash: true,
+    profit: true,
+  });
 
   const currency = (v) => formatRupiah(Number(v));
+
+  const cashNetProfitYDomain = useMemo(() => {
+    if (!cashflowGraphs?.length) return [0, "auto"];
+
+    let minValue = Infinity;
+    let maxValue = -Infinity;
+
+    cashflowGraphs.forEach((item) => {
+      if (selectedCashNetProfitTypes.cash && item.cash !== undefined) {
+        minValue = Math.min(minValue, item.cash);
+        maxValue = Math.max(maxValue, item.cash);
+      }
+      if (selectedCashNetProfitTypes.profit && item.profit !== undefined) {
+        minValue = Math.min(minValue, item.profit);
+        maxValue = Math.max(maxValue, item.profit);
+      }
+    });
+
+    if (minValue === Infinity || maxValue === -Infinity) return [0, "auto"];
+
+    const padding = (maxValue - minValue) * 0.1;
+    return [minValue - padding, maxValue + padding];
+  }, [cashflowGraphs, selectedCashNetProfitTypes]);
+
+  const handleToggle = (key) => {
+    setSelectedCashflowTypes((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const handleToggleEggSale = (key) => {
+    setSelectedEggSaleTypes((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const handleToggleCashNetProfit = (key) => {
+    setSelectedCashNetProfitTypes((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
 
   const CustomTooltip = ({ active, label, payload }) => {
     if (!active || !payload?.length) return null;
@@ -192,6 +251,38 @@ export default function GeneralCashflow() {
       </div>
 
       <ChartCard title="Grafik Pendapatan - Pengeluaran">
+        <div className="flex gap-6 mb-4 items-center flex-wrap px-6">
+          <label className="flex items-center gap-2 text-base">
+            <input
+              type="checkbox"
+              checked={selectedCashflowTypes.income}
+              onChange={() => handleToggle("income")}
+              className="w-5 h-5 accent-blue-500"
+            />
+            Pendapatan
+          </label>
+
+          <label className="flex items-center gap-2 text-base">
+            <input
+              type="checkbox"
+              checked={selectedCashflowTypes.profit}
+              onChange={() => handleToggle("profit")}
+              className="w-5 h-5 accent-green-500"
+            />
+            Keuntungan
+          </label>
+
+          <label className="flex items-center gap-2 text-base">
+            <input
+              type="checkbox"
+              checked={selectedCashflowTypes.expense}
+              onChange={() => handleToggle("expense")}
+              className="w-5 h-5 accent-red-500"
+            />
+            Pengeluaran
+          </label>
+        </div>
+
         <ResponsiveContainer width="100%" height={300}>
           <LineChart
             data={cashflowGraphs}
@@ -220,47 +311,75 @@ export default function GeneralCashflow() {
             <Tooltip content={<CustomTooltip />} />
             <Legend verticalAlign="top" height={28} iconType="circle" />
 
-            <Line
-              type="monotone"
-              name="pendapatan"
-              dataKey="income"
-              stroke="#3b82f6"
-              strokeWidth={2.5}
-              strokeLinecap="round"
-              dot={{ r: 3, strokeWidth: 1, stroke: "#3b82f6", fill: "#fff" }}
-              activeDot={{ r: 6 }}
-              connectNulls
-              animationDuration={600}
-            />
-            <Line
-              type="monotone"
-              name="keuntungan"
-              dataKey="profit"
-              stroke="#22c55e"
-              strokeWidth={2.5}
-              strokeLinecap="round"
-              dot={{ r: 3, strokeWidth: 1, stroke: "#22c55e", fill: "#fff" }}
-              activeDot={{ r: 6 }}
-              connectNulls
-              animationDuration={600}
-            />
-            <Line
-              type="monotone"
-              name="pengeluaran"
-              dataKey="expense"
-              stroke="#ef4444"
-              strokeWidth={2.5}
-              strokeLinecap="round"
-              dot={{ r: 3, strokeWidth: 1, stroke: "#ef4444", fill: "#fff" }}
-              activeDot={{ r: 6 }}
-              connectNulls
-              animationDuration={600}
-            />
+            {selectedCashflowTypes.income && (
+              <Line
+                type="monotone"
+                name="pendapatan"
+                dataKey="income"
+                stroke="#3b82f6"
+                strokeWidth={2.5}
+                strokeLinecap="round"
+                dot={{ r: 3, strokeWidth: 1, stroke: "#3b82f6", fill: "#fff" }}
+                activeDot={{ r: 6 }}
+                connectNulls
+                animationDuration={600}
+              />
+            )}
+            {selectedCashflowTypes.profit && (
+              <Line
+                type="monotone"
+                name="keuntungan"
+                dataKey="profit"
+                stroke="#22c55e"
+                strokeWidth={2.5}
+                strokeLinecap="round"
+                dot={{ r: 3, strokeWidth: 1, stroke: "#22c55e", fill: "#fff" }}
+                activeDot={{ r: 6 }}
+                connectNulls
+                animationDuration={600}
+              />
+            )}
+            {selectedCashflowTypes.expense && (
+              <Line
+                type="monotone"
+                name="pengeluaran"
+                dataKey="expense"
+                stroke="#ef4444"
+                strokeWidth={2.5}
+                strokeLinecap="round"
+                dot={{ r: 3, strokeWidth: 1, stroke: "#ef4444", fill: "#fff" }}
+                activeDot={{ r: 6 }}
+                connectNulls
+                animationDuration={600}
+              />
+            )}
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>
 
       <ChartCard title="Grafik Penjualan Telur">
+        <div className="flex gap-6 mb-4 items-center flex-wrap px-6">
+          <label className="flex items-center gap-2 text-base">
+            <input
+              type="checkbox"
+              checked={selectedEggSaleTypes.warehouseEggSale}
+              onChange={() => handleToggleEggSale("warehouseEggSale")}
+              className="w-5 h-5 accent-blue-500"
+            />
+            Penjualan Gudang
+          </label>
+
+          <label className="flex items-center gap-2 text-base">
+            <input
+              type="checkbox"
+              checked={selectedEggSaleTypes.storeEggSale}
+              onChange={() => handleToggleEggSale("storeEggSale")}
+              className="w-5 h-5 accent-green-500"
+            />
+            Toko
+          </label>
+        </div>
+
         <ResponsiveContainer width="100%" height={300}>
           <LineChart
             data={eggSaleCashflowGraphs}
@@ -275,35 +394,61 @@ export default function GeneralCashflow() {
             <Tooltip content={<CustomTooltip />} />
             <Legend verticalAlign="top" height={28} iconType="circle" />
 
-            <Line
-              type="monotone"
-              name="Penjualan Gudang"
-              dataKey="warehouseEggSale"
-              stroke="#3b82f6"
-              strokeWidth={2.5}
-              strokeLinecap="round"
-              dot={{ r: 3, strokeWidth: 1, stroke: "#3b82f6", fill: "#fff" }}
-              activeDot={{ r: 6 }}
-              connectNulls
-              animationDuration={600}
-            />
-            <Line
-              type="monotone"
-              name="Toko"
-              dataKey="storeEggSale"
-              stroke="#22c55e"
-              strokeWidth={2.5}
-              strokeLinecap="round"
-              dot={{ r: 3, strokeWidth: 1, stroke: "#22c55e", fill: "#fff" }}
-              activeDot={{ r: 6 }}
-              connectNulls
-              animationDuration={600}
-            />
+            {selectedEggSaleTypes.warehouseEggSale && (
+              <Line
+                type="monotone"
+                name="Penjualan Gudang"
+                dataKey="warehouseEggSale"
+                stroke="#3b82f6"
+                strokeWidth={2.5}
+                strokeLinecap="round"
+                dot={{ r: 3, strokeWidth: 1, stroke: "#3b82f6", fill: "#fff" }}
+                activeDot={{ r: 6 }}
+                connectNulls
+                animationDuration={600}
+              />
+            )}
+            {selectedEggSaleTypes.storeEggSale && (
+              <Line
+                type="monotone"
+                name="Toko"
+                dataKey="storeEggSale"
+                stroke="#22c55e"
+                strokeWidth={2.5}
+                strokeLinecap="round"
+                dot={{ r: 3, strokeWidth: 1, stroke: "#22c55e", fill: "#fff" }}
+                activeDot={{ r: 6 }}
+                connectNulls
+                animationDuration={600}
+              />
+            )}
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>
 
       <ChartCard title="Kas - Net Profit">
+        <div className="flex gap-6 mb-4 items-center flex-wrap px-6">
+          <label className="flex items-center gap-2 text-base">
+            <input
+              type="checkbox"
+              checked={selectedCashNetProfitTypes.cash}
+              onChange={() => handleToggleCashNetProfit("cash")}
+              className="w-5 h-5 accent-blue-500"
+            />
+            Kas
+          </label>
+
+          <label className="flex items-center gap-2 text-base">
+            <input
+              type="checkbox"
+              checked={selectedCashNetProfitTypes.profit}
+              onChange={() => handleToggleCashNetProfit("profit")}
+              className="w-5 h-5 accent-green-500"
+            />
+            Keuntungan
+          </label>
+        </div>
+
         <ResponsiveContainer width="100%" height={300}>
           <LineChart
             data={cashflowGraphs}
@@ -313,35 +458,40 @@ export default function GeneralCashflow() {
             <XAxis dataKey="Key" tickMargin={8} />
             <YAxis
               width={80}
+              domain={cashNetProfitYDomain}
               tickFormatter={(value) => `${parseInt(value / 1000000)} juta`}
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend verticalAlign="top" height={28} iconType="circle" />
 
-            <Line
-              type="monotone"
-              name="Kas"
-              dataKey="cash"
-              stroke="#3b82f6"
-              strokeWidth={2.5}
-              strokeLinecap="round"
-              dot={{ r: 3, strokeWidth: 1, stroke: "#3b82f6", fill: "#fff" }}
-              activeDot={{ r: 6 }}
-              connectNulls
-              animationDuration={600}
-            />
-            <Line
-              type="monotone"
-              name="Keuntungan"
-              dataKey="profit"
-              stroke="#22c55e"
-              strokeWidth={2.5}
-              strokeLinecap="round"
-              dot={{ r: 3, strokeWidth: 1, stroke: "#22c55e", fill: "#fff" }}
-              activeDot={{ r: 6 }}
-              connectNulls
-              animationDuration={600}
-            />
+            {selectedCashNetProfitTypes.cash && (
+              <Line
+                type="monotone"
+                name="Kas"
+                dataKey="cash"
+                stroke="#3b82f6"
+                strokeWidth={2.5}
+                strokeLinecap="round"
+                dot={{ r: 3, strokeWidth: 1, stroke: "#3b82f6", fill: "#fff" }}
+                activeDot={{ r: 6 }}
+                connectNulls
+                animationDuration={600}
+              />
+            )}
+            {selectedCashNetProfitTypes.profit && (
+              <Line
+                type="monotone"
+                name="Keuntungan"
+                dataKey="profit"
+                stroke="#22c55e"
+                strokeWidth={2.5}
+                strokeLinecap="round"
+                dot={{ r: 3, strokeWidth: 1, stroke: "#22c55e", fill: "#fff" }}
+                activeDot={{ r: 6 }}
+                connectNulls
+                animationDuration={600}
+              />
+            )}
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>

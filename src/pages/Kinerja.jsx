@@ -111,6 +111,10 @@ const Kinerja = () => {
   const [bepGoodEgg, setBepGoodEgg] = useState([]);
   const [marginOfSafety, setMarginOfSafety] = useState([]);
   const [rcRatio, setRcRatio] = useState([]);
+  const [selectedPerformanceTypes, setSelectedPerformanceTypes] = useState({
+    income: true,
+    expense: true,
+  });
 
   const location = useLocation();
   const detailPages = ["detail-kinerja-ayam"];
@@ -132,6 +136,13 @@ const Kinerja = () => {
     const detailPath = currentPath + "/detail-kinerja-ayam";
 
     navigate(detailPath);
+  };
+
+  const handleToggle = (key) => {
+    setSelectedPerformanceTypes((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
   };
 
   const [selectedFilter, setSelectedFilter] = useState("Rentabilitas");
@@ -432,12 +443,34 @@ const Kinerja = () => {
           </div>
 
           <div className="p-6 border border-black-6 rounded-lg mt-3">
-            <div className="flex justify-between">
-              <h2 className="text-lg font-bold mb-4">
+            <div className="flex justify-between mb-4 flex-wrap gap-4">
+              <h2 className="text-lg font-bold">
                 Grafik Pendapatan vs Pengeluaran
               </h2>
 
               <YearSelector year={year} setYear={setYear} />
+            </div>
+
+            <div className="flex gap-6 mb-4 items-center flex-wrap">
+              <label className="flex items-center gap-2 text-base">
+                <input
+                  type="checkbox"
+                  checked={selectedPerformanceTypes.income}
+                  onChange={() => handleToggle("income")}
+                  className="w-5 h-5 accent-green-500"
+                />
+                Pendapatan
+              </label>
+
+              <label className="flex items-center gap-2 text-base">
+                <input
+                  type="checkbox"
+                  checked={selectedPerformanceTypes.expense}
+                  onChange={() => handleToggle("expense")}
+                  className="w-5 h-5 accent-red-500"
+                />
+                Pengeluaran
+              </label>
             </div>
 
             {/* Wrapper scrollable */}
@@ -465,22 +498,26 @@ const Kinerja = () => {
                       }
                     />
                     <Legend />
-                    <Line
-                      type="monotone"
-                      dataKey="income"
-                      stroke="#10b981"
-                      strokeWidth={2}
-                      dot={false}
-                      name="Pendapatan"
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="expense"
-                      stroke="#ef4444"
-                      strokeWidth={2}
-                      dot={false}
-                      name="Pengeluaran"
-                    />
+                    {selectedPerformanceTypes.income && (
+                      <Line
+                        type="monotone"
+                        dataKey="income"
+                        stroke="#10b981"
+                        strokeWidth={2}
+                        dot={false}
+                        name="Pendapatan"
+                      />
+                    )}
+                    {selectedPerformanceTypes.expense && (
+                      <Line
+                        type="monotone"
+                        dataKey="expense"
+                        stroke="#ef4444"
+                        strokeWidth={2}
+                        dot={false}
+                        name="Pengeluaran"
+                      />
+                    )}
                   </LineChart>
                 </ResponsiveContainer>
               </div>
