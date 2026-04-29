@@ -347,30 +347,33 @@ const ProduksiTelur = () => {
               </div>
             </div>
 
-            <div className="flex gap-4 mt-4">
-              <label>
+            <div className="flex gap-6 mt-4 items-center">
+              <label className="flex items-center gap-2 text-base">
                 <input
                   type="checkbox"
                   checked={selectedTypes.telurOK_butir}
                   onChange={() => handleToggle("telurOK_butir")}
+                  className="w-5 h-5 accent-green-500"
                 />
                 Telur OK
               </label>
 
-              <label>
+              <label className="flex items-center gap-2 text-base">
                 <input
                   type="checkbox"
                   checked={selectedTypes.telurRetak}
                   onChange={() => handleToggle("telurRetak")}
+                  className="w-5 h-5 accent-yellow-400"
                 />
                 Telur Retak
               </label>
 
-              <label>
+              <label className="flex items-center gap-2 text-base">
                 <input
                   type="checkbox"
                   checked={selectedTypes.telurReject}
                   onChange={() => handleToggle("telurReject")}
+                  className="w-5 h-5 accent-red-500"
                 />
                 Telur Reject
               </label>

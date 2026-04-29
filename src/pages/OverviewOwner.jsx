@@ -10,6 +10,7 @@ import {
 import { FiMaximize2 } from "react-icons/fi";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { TfiReload } from "react-icons/tfi";
+import { FaCalendarAlt } from "react-icons/fa";
 
 import {
   LineChart,
@@ -50,6 +51,16 @@ const OverviewOwner = () => {
   const [saleSummary, setSaleSummary] = useState([]);
   const [storeItemSummary, setStoreItemSummary] = useState([]);
   const [warehouseItemSummary, setWarehouseItemSummary] = useState([]);
+  const [graphFilterOptions, setGraphFilterOptions] = useState([
+    "Minggu Ini",
+    "Bulan Ini",
+    "Tahun Ini",
+  ]);
+  const [graphFilter, setGraphFilter] = useState("Minggu Ini");
+  const [selectedTypes, setSelectedTypes] = useState({
+    production: true,
+    sale: true,
+  });
 
   const detailPages = [
     "riwayat-aktivitas",
@@ -102,6 +113,13 @@ const OverviewOwner = () => {
       "toko/overview-toko",
     );
     navigate(newPath);
+  };
+
+  const handleToggle = (key) => {
+    setSelectedTypes((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
   };
 
   useEffect(() => {
@@ -195,8 +213,34 @@ const OverviewOwner = () => {
 
       <div className="flex flex-col lg:flex-row  items-stretch gap-6">
         <div className="w-full lg:w-6/8 bg-white rounded-lg p-4 border border-black-6">
-          <h2 className="text-xl font-semibold mb-4">Produksi & Penjualan</h2>
-          <ResponsiveContainer width="100%" height="80%">
+          <div className="flex flex-col sm:flex-row gap-4 justify-between mb-4">
+            <h2 className="text-xl font-semibold">Produksi & Penjualan</h2>
+          </div>
+
+          <div className="flex gap-6 mt-4 items-center">
+            <label className="flex items-center gap-2 text-base">
+              <input
+                type="checkbox"
+                checked={selectedTypes.production}
+                onChange={() => handleToggle("production")}
+                className="w-5 h-5 accent-red-500"
+              />
+              Produksi Telur
+            </label>
+
+            <label className="flex items-center gap-2 text-base">
+              <input
+                type="checkbox"
+                checked={selectedTypes.sale}
+                onChange={() => handleToggle("sale")}
+                className="w-5 h-5 accent-amber-500"
+              />
+              Penjualan Telur
+            </label>
+          </div>
+
+          <div className="h-64 sm:h-96 mt-4">
+          <ResponsiveContainer width="100%" height="100%">
             <LineChart data={productionAndSaleEggGraphs}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="key" />
@@ -206,24 +250,29 @@ const OverviewOwner = () => {
                 labelFormatter={(label) => `Tanggal: ${label}`}
               />
               <Legend verticalAlign="top" align="right" />
-              <Line
-                type="monotone"
-                dataKey="production"
-                stroke="#ef4444"
-                name="Produksi Telur"
-                strokeWidth={2}
-                dot={{ r: 4 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="sale"
-                stroke="#f59e0b"
-                name="Penjualan Telur"
-                strokeWidth={2}
-                dot={{ r: 4 }}
-              />
+              {selectedTypes.production && (
+                <Line
+                  type="monotone"
+                  dataKey="production"
+                  stroke="#ef4444"
+                  name="Produksi Telur"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                />
+              )}
+              {selectedTypes.sale && (
+                <Line
+                  type="monotone"
+                  dataKey="sale"
+                  stroke="#f59e0b"
+                  name="Penjualan Telur"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                />
+              )}
             </LineChart>
           </ResponsiveContainer>
+          </div>
         </div>
 
         <div className="w-full h-full lg:w-2/8 flex flex-col gap-4">
