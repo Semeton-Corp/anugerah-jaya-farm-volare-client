@@ -273,6 +273,12 @@ const AppRouter = createBrowserRouter([
                       {
                         path: "input-draft-pesan-doc",
                         element: <InputDraftPemesananDoc />,
+                        children: [
+                          {
+                            path: "tambah-supplier",
+                            element: <TambahSupplier />,
+                          },
+                        ],
                       },
                     ],
                   },
@@ -1203,6 +1209,12 @@ const AppRouter = createBrowserRouter([
                       {
                         path: "input-draft-pesan-doc",
                         element: <InputDraftPemesananDoc />,
+                        children: [
+                          {
+                            path: "tambah-supplier",
+                            element: <TambahSupplier />,
+                          },
+                        ],
                       },
                     ],
                   },

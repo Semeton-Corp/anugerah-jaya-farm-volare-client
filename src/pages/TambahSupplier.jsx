@@ -258,24 +258,6 @@ const TambahSupplier = () => {
           </div>
         </div>
       </div>
-      <button
-        onClick={() => {
-          const payload = {
-            itemIds: selectedItems,
-            name: name,
-            phoneNumber: phoneNumber,
-            address: address,
-          };
-          console.log("payload: ", payload);
-          console.log("name: ", name);
-          console.log("selectedItems: ", selectedItems);
-          console.log("address: ", address);
-          console.log("phoneNumber: ", phoneNumber);
-          console.log("warehouseItems: ", warehouseItems);
-        }}
-      >
-        Check
-      </button>
     </div>
   );
 };

@@ -4,13 +4,19 @@ import { useEffect } from "react";
 import { getCage, getChickenCage } from "../services/cages";
 import { getSuppliers } from "../services/supplier";
 import { createChickenProcurementDraft } from "../services/chickenMonitorings";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { formatThousand, onlyDigits } from "../utils/moneyFormat";
 import { IoLogoWhatsapp } from "react-icons/io5";
 
 const InputDraftPemesananDoc = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const userRole = localStorage.getItem("role");
+
+  const detailPages = ["tambah-supplier"];
+  const isDetailPage = detailPages.some((segment) =>
+    location.pathname.includes(segment)
+  );
 
   const [selectedSite] = useState(
     userRole === "Owner" ? 0 : localStorage.getItem("locationId")
@@ -90,7 +96,11 @@ const InputDraftPemesananDoc = () => {
   }, []);
 
   return (
-    <div className="p-4 sm:p-6">
+    <>
+      {isDetailPage ? (
+        <Outlet />
+      ) : (
+        <div className="p-4 sm:p-6">
       <h2 className="text-2xl sm:text-3xl font-bold mb-6">
         Input Draft Pemesanan DOC
       </h2>
@@ -144,23 +154,34 @@ const InputDraftPemesananDoc = () => {
           {/* Supplier */}
           <div>
             <label className="block mb-1">Supplier DOC</label>
-            <select
-              className="w-full border rounded px-4 py-2 bg-gray-100"
-              value={selectedSupplier?.id ?? ""}
-              onChange={(e) => {
-                const selectedSupplier = suppliers.find(
-                  (supplier) => supplier?.id === parseInt(e.target.value)
-                );
-                setSelectedSupplier(selectedSupplier);
-              }}
-            >
-              <option value="">Pilih nama supplier</option>
-              {suppliers?.map((supplier) => (
-                <option key={supplier?.id} value={supplier?.id}>
-                  {supplier?.name}
-                </option>
-              ))}
-            </select>
+            <div className="flex gap-2">
+              <select
+                className="flex-1 border rounded px-4 py-2 bg-gray-100"
+                value={selectedSupplier?.id ?? ""}
+                onChange={(e) => {
+                  const selectedSupplier = suppliers.find(
+                    (supplier) => supplier?.id === parseInt(e.target.value)
+                  );
+                  setSelectedSupplier(selectedSupplier);
+                }}
+              >
+                <option value="">Pilih nama supplier</option>
+                {suppliers?.map((supplier) => (
+                  <option key={supplier?.id} value={supplier?.id}>
+                    {supplier?.name}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => {
+                  navigate(`${location.pathname}/tambah-supplier`);
+                }}
+                className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-900 whitespace-nowrap text-sm sm:text-base flex items-center gap-1"
+              >
+                + Tambah Supplier
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -250,8 +271,10 @@ Kami dari *Anugerah Jaya Farm* ingin menanyakan harga berikut:
             </button>
           </div>
         </form>
-      </div>
-    </div>
+        </div>
+        </div>
+      )}
+    </>
   );
 };
 
