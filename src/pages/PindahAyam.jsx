@@ -297,6 +297,9 @@ const PindahAyam = () => {
           <div className="bg-white rounded-lg w-[95%] md:w-3/4 max-h-[90vh] p-6 overflow-y-auto">
             <div className="flex justify-between mb-4">
               <h3 className="text-lg font-bold">Daftar Kandang Tujuan</h3>
+              <button onClick={() => { console.log('kandangOptions:', kandangOptions); }}>
+                CHECK
+              </button>
               <button
                 onClick={() => setShowTujuanModal(false)}
                 className="text-lg font-bold hover:text-gray-500"
@@ -327,7 +330,7 @@ const PindahAyam = () => {
                       <td className="px-4 py-2">{k.chickenAge}</td>
                       <td className="px-4 py-2">{k.cage.capacity}</td>
                       <td className="px-4 py-2">
-                        {(!k.cage.isUsed && k.totalChicken === 0) || asal.batchId == k.batchId && (
+                        {((!k.cage.isUsed && k.totalChicken == 0) || asal.batchId == k.batchId) && (
                           <button
                             onClick={() => handlePilihTujuan(k)}
                             className="bg-orange-300 hover:bg-orange-500 px-3 py-1 rounded cursor-pointer"
