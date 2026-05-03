@@ -180,7 +180,7 @@ const DaftarKandang = () => {
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">{row.batchId}</td>
                   <td className="px-4 py-2 whitespace-nowrap">
-                    {row.chickenCategory}
+                    {row.cage.chickenCategory}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
                     {row.chickenAge}
