@@ -184,7 +184,7 @@ const DaftarKandang = () => {
                     {row.batchId ? (
                       <p>{row.chickenCategory}</p>
                     ) : (
-                      <p>{row.cage.chickenCategory}</p>
+                      <p>{"-"}</p>
                     )}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
