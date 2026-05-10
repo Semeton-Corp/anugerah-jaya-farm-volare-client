@@ -5,6 +5,7 @@ import { MdStore } from "react-icons/md";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { getChickenCage } from "../services/cages";
 import { getLocations } from "../services/location";
+import { p } from "framer-motion/client";
 
 const DaftarKandang = () => {
   const userRole = localStorage.getItem("role");
@@ -180,7 +181,11 @@ const DaftarKandang = () => {
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">{row.batchId}</td>
                   <td className="px-4 py-2 whitespace-nowrap">
-                    {row.cage.chickenCategory}
+                    {row.batchId ? (
+                      <p>{row.chickenCategory}</p>
+                    ) : (
+                      <p>{row.cage.chickenCategory}</p>
+                    )}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
                     {row.chickenAge}

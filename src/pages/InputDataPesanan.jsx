@@ -1648,7 +1648,7 @@ Kami dari *Anugerah Jaya Farm* ingin mengkonfirmasi harga barang *PER ${unit.toU
       </div>
 
       {/* simpan button */}
-      <div className="flex justify-end mb-8">
+      {/* <div className="flex justify-end mb-8">
         <div
           onClick={() => {
             console.log("discount: ", discount);
@@ -1657,7 +1657,7 @@ Kami dari *Anugerah Jaya Farm* ingin mengkonfirmasi harga barang *PER ${unit.toU
         >
           CHECK
         </div>
-      </div>
+      </div> */}
 
       {showPaymentModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
