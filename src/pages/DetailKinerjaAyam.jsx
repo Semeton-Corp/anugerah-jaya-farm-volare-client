@@ -156,7 +156,7 @@ const DetailKinerjaAyam = () => {
                     </tr>
                   ) : (
                     performacesData.map((row, index) => (
-                      <tr key={index} className="border-b text-center">
+                      <tr key={index} className="border-b text-center align-middle">
                         <td className="py-2 px-4">{row.cageName}</td>
                         <td className="py-2 px-4">{row.chickenCategory}</td>
                         <td className="py-2 px-4">{row.chickenAge}</td>
@@ -174,9 +174,9 @@ const DetailKinerjaAyam = () => {
                         <td className="py-2 px-4">
                           {Number(row.hdp).toFixed(2)}
                         </td>
-                        <td className="py-2 px-4 flex justify-center">
+                        <td className="py-2 px-4 flex justify-center items-center">
                           <div
-                            className={`w-24 py-1 flex justify-center rounded text-sm font-semibold ${
+                            className={`py-1 px-3 min-w-24 flex justify-center items-center rounded text-sm font-semibold whitespace-nowrap ${
                               row.productivity === "Produktif"
                                 ? "bg-aman-box-surface-color text-aman-text-color"
                                 : "bg-kritis-box-surface-color text-kritis-text-color"
