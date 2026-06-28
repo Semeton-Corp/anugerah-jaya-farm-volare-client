@@ -42,10 +42,16 @@ export default function PembagianPakan() {
   };
 
   const openModal = async (row) => {
+    console.log("row object:", row);
+    if (!row?.id) {
+      console.error("Row id is undefined:", row);
+      alert("❌ Error: ID tidak ditemukan. Silahkan refresh halaman.");
+      return;
+    }
     setSelected(row);
     setGudangId("");
     try {
-      const detailResponse = await getChickenCageFeed(row?.id);
+      const detailResponse = await getChickenCageFeed(row.id);
       console.log("detailResponse: ", detailResponse);
       if (detailResponse.status == 200) {
         const data = detailResponse.data.data;
@@ -99,7 +105,7 @@ export default function PembagianPakan() {
 
   const fetchKandangList = async () => {
     try {
-      const kandangResponse = await getChickenCageFeeds(selectedSite);
+      const kandangResponse = await getChickenCageFeeds(selectedSite || locationId);
       console.log("kandangResponse: ", kandangResponse);
       if (kandangResponse.status == 200) {
         const list = kandangResponse.data.data;
