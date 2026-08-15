@@ -92,10 +92,6 @@ const DetailPengadaanBarang = () => {
     [data]
   );
   const finalRemaining = Math.max(priceTotal - totalPaid, 0);
-  const payStatus =
-    finalRemaining === 0 && (data?.payments?.length || 0) > 0
-      ? "Lunas"
-      : "Belum Lunas";
 
   const shipTone = (() => {
     const status = data?.procurementStatus?.toLowerCase();
@@ -244,8 +240,20 @@ const DetailPengadaanBarang = () => {
             Status Pembayaran
           </p>
           <div className="mt-1">
-            <Badge tone={payStatus === "Lunas" ? "success" : "warning"}>
-              {payStatus}
+            <Badge
+              tone={
+                finalRemaining === 0
+                  ? "success"
+                  : data?.payments?.length
+                  ? "warning"
+                  : "danger"
+              }
+            >
+              {finalRemaining === 0
+                ? "Dibayar Penuh"
+                : data?.payments?.length
+                ? "Dibayar Sebagian"
+                : "Belum Dibayar"}
             </Badge>
           </div>
         </div>
@@ -324,18 +332,16 @@ const DetailPengadaanBarang = () => {
             <span className="text-sm md:text-base">Tipe Pembayaran :</span>
             <Badge
               tone={
-                finalRemaining === 0
+                data?.paymentType === "Lunas"
                   ? "success"
-                  : data.payments?.length
+                  : data?.paymentType === "Pembayaran Akhir"
+                  ? "danger"
+                  : data?.paymentType === "Cicil"
                   ? "warning"
-                  : "danger"
+                  : "neutral"
               }
             >
-              {finalRemaining === 0
-                ? "Dibayar Penuh"
-                : data.payments?.length
-                ? "Dibayar Sebagian"
-                : "Belum Dibayar"}
+              {data?.paymentType || "-"}
             </Badge>
           </div>
 
@@ -423,8 +429,20 @@ const DetailPengadaanBarang = () => {
               <span className="font-semibold text-sm md:text-base">
                 Status Pembayaran:
               </span>
-              <Badge tone={payStatus === "Lunas" ? "success" : "warning"}>
-                {payStatus}
+              <Badge
+                tone={
+                  finalRemaining === 0
+                    ? "success"
+                    : data?.payments?.length
+                    ? "warning"
+                    : "danger"
+                }
+              >
+                {finalRemaining === 0
+                  ? "Dibayar Penuh"
+                  : data?.payments?.length
+                  ? "Dibayar Sebagian"
+                  : "Belum Dibayar"}
               </Badge>
             </div>
 

@@ -122,6 +122,15 @@ const DraftPengadaanBarang = () => {
         navigate(newPath, { state: { refetch: true } });
       }
     } catch (error) {
+      if (
+        error.response?.data?.message === "payments are required for installment"
+      ) {
+        alert("Silahkan tambahkan satu bukti pembayaran terlebih dahulu❌");
+      } else {
+        alert(
+          "Gagal mengonfirmasi pesanan: " + error.response?.data?.message
+        );
+      }
       console.log("error :", error);
     }
   };

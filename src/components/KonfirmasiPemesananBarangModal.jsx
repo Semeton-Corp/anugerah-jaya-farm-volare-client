@@ -390,6 +390,7 @@ const KonfirmasiPemesananBarangModal = ({
           >
             <option value="Penuh">Penuh</option>
             <option value="Cicil">Cicil</option>
+            <option value="Pembayaran Akhir">Pembayaran Akhir</option>
           </select>
         </div>
 
