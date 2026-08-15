@@ -75,9 +75,13 @@ const DraftPengadaanDoc = () => {
       }
     } catch (error) {
       if (
-        (error.response.data.message = "cage is in used by another chicken")
+        error.response.data.message === "cage is in used by another chicken"
       ) {
         alert("❌Kandang sudah digunakan, silahkan pilih kandang lain.");
+      } else if (
+        error.response.data.message === "payments are required for installment"
+      ) {
+        alert("Silahkan tambahkan satu bukti pembayaran terlebih dahulu❌");
       } else {
         alert("Gagal mengonfirmasi pesanan: " + error.response.data.message);
       }

@@ -27,6 +27,7 @@ const Badge = ({ children, tone = "neutral" }) => {
     warning: "bg-orange-200 text-orange-900",
     success: "bg-[#87FF8B] text-black",
     info: "bg-cyan-200 text-cyan-900",
+    danger: "bg-red-200 text-red-900",
   };
   return (
     <span
@@ -294,18 +295,16 @@ export default function DetailPengadaanDoc() {
             <span className="text-sm mr-2">Tipe Pembayaran :</span>
             <Badge
               tone={
-                finalRemaining === 0
+                data?.paymentType === "Lunas"
                   ? "success"
-                  : data.payments?.length
+                  : data?.paymentType === "Pembayaran Akhir"
+                  ? "danger"
+                  : data?.paymentType === "Cicil"
                   ? "warning"
                   : "neutral"
               }
             >
-              {finalRemaining === 0
-                ? "Dibayar Penuh"
-                : data.payments?.length
-                ? "Dibayar Setengah"
-                : "Belum Dibayar"}
+              {data?.paymentType || "-"}
             </Badge>
           </div>
 
