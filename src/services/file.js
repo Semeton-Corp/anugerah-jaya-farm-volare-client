@@ -34,18 +34,29 @@ export const uploadFile = async (file) => {
   const formData = new FormData();
   formData.append("file", fileToUpload);
 
-  try {
-    const response = await api.post("/files/upload", formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-        Accept: "application/json",
-      },
-    });
+  const maxAttempts = 3;
+  let lastError;
 
-    return response.data?.data?.url || response.data?.url;
-  } catch (error) {
-    console.error("File upload failed:", error);
-    throw error;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const response = await api.post("/files/upload", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+          Accept: "application/json",
+        },
+      });
+
+      return response.data?.data?.url || response.data?.url;
+    } catch (error) {
+      lastError = error;
+      console.error(`File upload failed (attempt ${attempt}/${maxAttempts}):`, error);
+
+      if (attempt < maxAttempts) {
+        await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
+      }
+    }
   }
+
+  throw lastError;
 };
