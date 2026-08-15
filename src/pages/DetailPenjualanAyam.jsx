@@ -35,12 +35,12 @@ const Badge = ({ tone = "neutral", children }) => {
     neutral: "bg-gray-200 text-gray-800",
     warning: "bg-orange-200 text-yellow-900",
     success: "bg-[#87FF8B] text-[#066000]",
+    danger: "bg-red-200 text-red-900",
   };
   return (
     <span
-      className={`inline-block px-3 py-1 rounded ${
-        tones[tone] || tones.neutral
-      }`}
+      className={`inline-block px-3 py-1 rounded ${tones[tone] || tones.neutral
+        }`}
     >
       {children}
     </span>
@@ -90,10 +90,6 @@ export default function DetailPenjualanAyam() {
     [sale.payments]
   );
   const finalRemaining = Math.max(totalPrice - totalPaid, 0);
-  const payStatus =
-    finalRemaining === 0 && (sale.payments?.length || 0) > 0
-      ? "Lunas"
-      : "Belum Lunas";
 
   const addPayment = async () => {
     let errorMessage = "";
@@ -311,9 +307,8 @@ export default function DetailPenjualanAyam() {
         <div className="pt-6 mt-6 border-t">
           <h2 className="text-lg font-bold mb-2">Payment Deadline</h2>
           <p
-            className={`flex text-base sm:text-lg items-center gap-2 font-semibold ${
-              isMoreThanDeadlinePaymentDate ? "text-red-600" : "text-black"
-            }`}
+            className={`flex text-base sm:text-lg items-center gap-2 font-semibold ${isMoreThanDeadlinePaymentDate ? "text-red-600" : "text-black"
+              }`}
           >
             {isMoreThanDeadlinePaymentDate && (
               <span className="text-red-600">
@@ -339,7 +334,25 @@ export default function DetailPenjualanAyam() {
           </div>
 
           <div className="px-4 pb-4">
+
             <div className="overflow-x-auto">
+              <div className="flex items-center gap-3">
+                <span className="font-semibold">Tipe Pembayaran :</span>
+                <Badge
+                  tone={
+                    sale?.paymentType === "Lunas"
+                      ? "success"
+                      : sale?.paymentType === "Pembayaran Akhir"
+                        ? "danger"
+                        : sale?.paymentType === "Cicil"
+                          ? "warning"
+                          : "neutral"
+                  }
+                >
+                  {sale?.paymentType || "-"}
+                </Badge>
+              </div>
+
               <table className="w-full">
                 <thead className="bg-green-700 text-white">
                   <tr>
@@ -439,13 +452,27 @@ export default function DetailPenjualanAyam() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-4 gap-2 sm:gap-0">
               <div className="flex items-center gap-3">
                 <span className="font-semibold">Status Pembayaran :</span>
-                <Badge tone={payStatus === "Lunas" ? "success" : "warning"}>
-                  {payStatus}
+                <Badge
+                  tone={
+                    finalRemaining === 0
+                      ? "success"
+                      : sale?.payments?.length
+                        ? "warning"
+                        : "danger"
+                  }
+                >
+                  {finalRemaining === 0
+                    ? "Dibayar Penuh"
+                    : sale?.payments?.length
+                      ? "Dibayar Sebagian"
+                      : "Belum Dibayar"}
                 </Badge>
               </div>
-              <div className="text-left sm:text-right">
-                <p className="font-medium">
-                  Sisa Bayar : {rupiah(finalRemaining)}
+
+              <div className="text-left sm:text-right w-full sm:w-auto">
+                <p className="font-bold text-base md:text-xl">Sisa Bayar:</p>
+                <p className="text-2xl md:text-3xl font-semibold">
+                  {rupiah(finalRemaining)}
                 </p>
               </div>
             </div>
@@ -539,11 +566,10 @@ export default function DetailPenjualanAyam() {
               <button
                 onClick={addPayment}
                 disabled={isUploading}
-                className={`px-4 py-2 rounded text-white ${
-                  isUploading
+                className={`px-4 py-2 rounded text-white ${isUploading
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-green-700 hover:bg-green-900 cursor-pointer"
-                }`}
+                  }`}
               >
                 {isUploading ? "Mengunggah..." : "Simpan"}
               </button>

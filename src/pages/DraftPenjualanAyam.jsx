@@ -61,6 +61,10 @@ const DraftPenjualanAyam = () => {
         "total sell chicken must be less than total chicken"
       ) {
         alert("❌Jumlah penjualan melebihi jumlah ayam di kandang");
+      } else if (
+        error?.response?.data?.message === "payments are required for installment"
+      ) {
+        alert("Silahkan tambahkan satu bukti pembayaran terlebih dahulu❌");
       }
       console.log("error :", error);
     }

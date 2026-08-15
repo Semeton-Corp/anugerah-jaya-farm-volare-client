@@ -156,6 +156,11 @@ const KonfirmasiPenjualanAyamModal = ({
       return;
     }
 
+    if (paymentType === "Cicil" && cleanedPayments.length === 0) {
+      alert("Silahkan tambahkan satu bukti pembayaran terlebih dahulu❌");
+      return;
+    }
+
     const payload = {
       chickenCageId: chickenCage?.id ?? null,
       afkirChickenCustomerId: sale.customer?.id ?? null,
@@ -306,6 +311,7 @@ const KonfirmasiPenjualanAyamModal = ({
           >
             <option value="Penuh">Penuh</option>
             <option value="Cicil">Cicil</option>
+            <option value="Pembayaran Akhir">Pembayaran Akhir</option>
           </select>
         </div>
 
@@ -415,10 +421,10 @@ const KonfirmasiPenjualanAyamModal = ({
         </div>
 
         <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
-          <button onClick={() => {
+          {/* <button onClick={() => {
             const checking = toInputDate(takenAt);
             console.log('checking:', checking);
-          }}>CHECK</button>
+          }}>CHECK</button> */}
 
           <button
             onClick={onClose}
