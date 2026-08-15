@@ -77,7 +77,7 @@ const SummaryCard = ({ title, value, yoy = null, isIncrease = null }) => {
   const yoyText =
     yoy == null
       ? "—"
-      : `${yoy > 0 ? "▲" : "▼"} ${Math.abs(yoy)}% dibanding tahun sebelumnya`;
+      : `${yoy > 0 ? "▲" : "▼"} ${Math.abs(yoy).toFixed(2)}% dibanding tahun sebelumnya`;
 
   const yoyCls = `text-sm mt-2 ${
     isPos ? "text-[#00A651]" : isNeg ? "text-red-700" : "text-gray-500"
@@ -121,6 +121,32 @@ export default function GeneralCashflow() {
   });
 
   const currency = (v) => formatRupiah(Number(v));
+
+  const cashflowYTicks = useMemo(() => {
+    if (!cashflowGraphs?.length) return undefined;
+
+    let minValue = Infinity;
+    let maxValue = -Infinity;
+
+    cashflowGraphs.forEach((item) => {
+      if (selectedCashflowTypes.income && item.income !== undefined) {
+        minValue = Math.min(minValue, item.income);
+        maxValue = Math.max(maxValue, item.income);
+      }
+      if (selectedCashflowTypes.profit && item.profit !== undefined) {
+        minValue = Math.min(minValue, item.profit);
+        maxValue = Math.max(maxValue, item.profit);
+      }
+      if (selectedCashflowTypes.expense && item.expense !== undefined) {
+        minValue = Math.min(minValue, item.expense);
+        maxValue = Math.max(maxValue, item.expense);
+      }
+    });
+
+    if (minValue === Infinity || maxValue === -Infinity) return undefined;
+
+    return generateTicks(minValue, maxValue);
+  }, [cashflowGraphs, selectedCashflowTypes]);
 
   const cashNetProfitYDomain = useMemo(() => {
     if (!cashflowGraphs?.length) return [0, "auto"];
@@ -292,18 +318,7 @@ export default function GeneralCashflow() {
             <XAxis dataKey="Key" tickMargin={8} />
             <YAxis
               width={70}
-              ticks={generateTicks(
-                Math.min(
-                  ...cashflowGraphs.map((d) =>
-                    Math.min(d.income, d.expense, d.profit)
-                  )
-                ),
-                Math.max(
-                  ...cashflowGraphs.map((d) =>
-                    Math.max(d.income, d.expense, d.profit)
-                  )
-                )
-              )}
+              ticks={cashflowYTicks}
               tick={{ fontSize: 12 }}
               tickFormatter={(value) => `${parseInt(value / 1000000)} juta`}
               padding={{ top: 20, bottom: 25 }}
