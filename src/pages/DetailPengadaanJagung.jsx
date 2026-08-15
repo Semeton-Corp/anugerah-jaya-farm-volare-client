@@ -30,6 +30,7 @@ const Badge = ({ children, tone = "neutral" }) => {
     warning: "bg-orange-200 text-orange-900",
     success: "bg-[#87FF8B] text-[#256d25]",
     info: "bg-cyan-200 text-cyan-900",
+    danger: "bg-red-200 text-red-900",
   };
   return (
     <span
@@ -331,10 +332,6 @@ export default function DetailPengadaanJagung() {
     [payments]
   );
   const finalRemaining = Math.max(totalPriceNumber - totalPaid, 0);
-  const payStatus =
-    finalRemaining === 0 && (payments?.length || 0) > 0
-      ? "Lunas"
-      : "Belum Lunas";
   const shipTone =
     procurementStatus === "Sedang Dikirim"
       ? "warning"
@@ -514,18 +511,16 @@ export default function DetailPengadaanJagung() {
             <span className="text-sm mr-2">Tipe Pembayaran :</span>
             <Badge
               tone={
-                finalRemaining === 0
+                data?.paymentType === "Lunas"
                   ? "success"
-                  : payments?.length
+                  : data?.paymentType === "Pembayaran Akhir"
+                  ? "danger"
+                  : data?.paymentType === "Cicil"
                   ? "warning"
                   : "neutral"
               }
             >
-              {finalRemaining === 0
-                ? "Dibayar Penuh"
-                : payments?.length
-                ? "Dibayar Sebagian"
-                : "Belum Dibayar"}
+              {data?.paymentType || "-"}
             </Badge>
           </div>
 
@@ -605,8 +600,20 @@ export default function DetailPengadaanJagung() {
               <span className="font-semibold text-sm md:text-base">
                 Status Pembayaran :
               </span>
-              <Badge tone={finalRemaining === 0 ? "success" : "warning"}>
-                {finalRemaining === 0 ? "Lunas" : "Belum Lunas"}
+              <Badge
+                tone={
+                  finalRemaining === 0
+                    ? "success"
+                    : payments?.length
+                    ? "warning"
+                    : "danger"
+                }
+              >
+                {finalRemaining === 0
+                  ? "Dibayar Penuh"
+                  : payments?.length
+                  ? "Dibayar Sebagian"
+                  : "Belum Dibayar"}
               </Badge>
             </div>
 
