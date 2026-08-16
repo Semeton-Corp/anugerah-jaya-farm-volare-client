@@ -153,7 +153,9 @@ const VaksinObat = () => {
               </tr>
             </thead>
             <tbody>
-              {detailAyamData.map((row, index) => (
+              {detailAyamData
+                .filter((row) => row.batchId)
+                .map((row, index) => (
                 <tr
                   key={index}
                   className="border-t border-gray-200 hover:bg-gray-50 text-center"
