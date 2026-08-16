@@ -57,7 +57,9 @@ const DaftarKandang = () => {
 
   const fetchKandangData = async () => {
     try {
-      const kandangResponse = await getChickenCage(selectedSite);
+      const kandangResponse = await getChickenCage(
+        selectedSite == 0 ? undefined : selectedSite
+      );
       console.log("kandangResponse: ", kandangResponse);
       if (kandangResponse.status === 200) {
         const allKandang = kandangResponse.data.data;
@@ -169,6 +171,10 @@ const DaftarKandang = () => {
                     {row.batchId ? (
                       <span className="px-3 py-1 bg-aman-box-surface-color text-aman-text-color font-semibold rounded shadow-sm">
                         Kandang Aktif
+                      </span>
+                    ) : row.cage?.isUsed ? (
+                      <span className="px-3 py-1 bg-orange-200 text-orange-900 font-semibold rounded shadow-sm">
+                        Kandang Sudah Disiapkan
                       </span>
                     ) : (
                       <span className="px-3 py-1 bg-kritis-box-surface-color text-kritis-text-color rounded shadow-sm">
