@@ -3,9 +3,10 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { MdStore } from "react-icons/md";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { getChickenCage } from "../services/cages";
+import { getChickenCage, updateChickenCageAge } from "../services/cages";
 import { getLocations } from "../services/location";
 import { p } from "framer-motion/client";
+import { EditUsiaAyamModal } from "../components/EditUsiaAyamModal";
 
 const DaftarKandang = () => {
   const userRole = localStorage.getItem("role");
@@ -16,6 +17,9 @@ const DaftarKandang = () => {
   const [selectedSite, setSelectedSite] = useState(
     userRole === "Owner" ? 0 : localStorage.getItem("locationId")
   );
+
+  const [showEditUsiaModal, setShowEditUsiaModal] = useState(false);
+  const [selectedKandang, setSelectedKandang] = useState(null);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -68,6 +72,28 @@ const DaftarKandang = () => {
       }
     } catch (error) {
       console.log("error :", error);
+    }
+  };
+
+  const editUsiaAyamHandle = (row) => {
+    setSelectedKandang(row);
+    setShowEditUsiaModal(true);
+  };
+
+  const handleSaveUsiaAyam = async ({ totalChicken, chickenAge }) => {
+    try {
+      const updateResponse = await updateChickenCageAge(
+        { totalChicken, chickenAge },
+        selectedKandang.id
+      );
+      if (updateResponse.status === 200) {
+        setShowEditUsiaModal(false);
+        setSelectedKandang(null);
+        fetchKandangData();
+      }
+    } catch (error) {
+      console.log("error :", error);
+      alert("❌ Gagal mengubah usia ayam");
     }
   };
 
@@ -207,12 +233,22 @@ const DaftarKandang = () => {
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">{row.eggPic}</td>
                   <td className="px-4 py-2 whitespace-nowrap">
-                    <button
-                      onClick={() => detailKandangHandle(row.id)}
-                      className="bg-green-700 hover:bg-green-900 hover:cursor-pointer text-white px-3 py-1 rounded whitespace-nowrap"
-                    >
-                      Lihat Detail
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => detailKandangHandle(row.id)}
+                        className="bg-green-700 hover:bg-green-900 hover:cursor-pointer text-white px-3 py-1 rounded whitespace-nowrap"
+                      >
+                        Lihat Detail
+                      </button>
+                      {row.batchId && (
+                        <button
+                          onClick={() => editUsiaAyamHandle(row)}
+                          className="bg-orange-300 hover:bg-orange-500 hover:cursor-pointer text-black px-3 py-1 rounded whitespace-nowrap"
+                        >
+                          Edit Usia Ayam
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -220,6 +256,19 @@ const DaftarKandang = () => {
           </table>
         </div>
       </div>
+
+      <EditUsiaAyamModal
+        open={showEditUsiaModal}
+        onClose={() => {
+          setShowEditUsiaModal(false);
+          setSelectedKandang(null);
+        }}
+        onSave={handleSaveUsiaAyam}
+        initialValues={{
+          totalChicken: selectedKandang?.totalChicken,
+          chickenAge: selectedKandang?.chickenAge,
+        }}
+      />
     </div>
   );
 };

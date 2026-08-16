@@ -35,6 +35,15 @@ export const getChickenCageById = (id) => {
   });
 };
 
+export const updateChickenCageAge = (payload, id) => {
+  return api.patch(`/cages/chickens/${id}`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+    },
+  });
+};
+
 export const moveChickenCage = (payload) => {
   return api.put(`/cages/chickens/moves`, payload, {
     headers: {
