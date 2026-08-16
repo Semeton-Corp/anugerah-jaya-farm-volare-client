@@ -240,7 +240,7 @@ const DaftarKandang = () => {
                       >
                         Lihat Detail
                       </button>
-                      {row.batchId && (
+                      {row.batchId && userRole === "Owner" && (
                         <button
                           onClick={() => editUsiaAyamHandle(row)}
                           className="bg-orange-300 hover:bg-orange-500 hover:cursor-pointer text-black px-3 py-1 rounded whitespace-nowrap"
