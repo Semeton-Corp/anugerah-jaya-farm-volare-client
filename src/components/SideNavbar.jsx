@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   MdKeyboardDoubleArrowRight,
   MdKeyboardDoubleArrowLeft,
@@ -16,10 +16,19 @@ const SideNavbar = ({ role, isExpanded, setIsExpanded, setIsMobileOpen }) => {
 
   const currentPath = location.pathname;
   const [expandedMenu, setExpandedMenu] = useState(null);
+  const submenuRefs = useRef({});
 
   const toggleSubmenu = (tabName) => {
     setExpandedMenu(expandedMenu === tabName ? null : tabName);
   };
+
+  useEffect(() => {
+    if (!expandedMenu) return;
+    const node = submenuRefs.current[expandedMenu];
+    if (node) {
+      node.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }, [expandedMenu]);
 
   // helper: navigate and close mobile drawer if setter available
   const goTo = (path) => {
@@ -94,7 +103,12 @@ const SideNavbar = ({ role, isExpanded, setIsExpanded, setIsMobileOpen }) => {
                 />
 
                 {hasSubTabs && isExpandedMenu && (
-                  <div className="ml-8 mt-3 me-4 space-y-3">
+                  <div
+                    ref={(node) => {
+                      submenuRefs.current[item.tabName] = node;
+                    }}
+                    className="ml-8 mt-3 me-4 space-y-3"
+                  >
                     {item.subTabs.map((subTab, sIdx) => {
                       const subLabel =
                         typeof subTab === "string"
